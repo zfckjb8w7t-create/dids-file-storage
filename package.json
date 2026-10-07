@@ -1,0 +1,17 @@
+{
+  "name": "dids-file-storage",
+  "version": "1.0.0",
+  "description": "Dids File Storage — Cloudflare Worker + R2 + D1 file host with keyed access, device lock, chunked 250GB uploads, folders, tickets and an admin console.",
+  "type": "module",
+  "main": "src/worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:local": "wrangler d1 execute dids-file-storage --local --file=./schema.sql",
+    "db:remote": "wrangler d1 execute dids-file-storage --remote --file=./schema.sql",
+    "harness": "node harness/local-server.js",
+    "test:e2e": "node test/e2e.mjs"
+  },
+  "keywords": ["cloudflare", "workers", "r2", "d1", "file-storage"],
+  "license": "MIT"
+}

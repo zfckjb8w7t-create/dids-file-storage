@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Public Downloads · Dids File Storage</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='78' font-size='78'>💾</text></svg>">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="scrim"></div>
+<div class="wrap">
+  <div class="bar">
+    <a class="brand" href="/" style="text-decoration:none">Dids File Storage <small>&lt;3</small></a>
+    <div class="spacer"></div>
+    <a class="navlink active" href="/public">Public Downloads</a>
+    <a class="navlink" href="/">Enter Key</a>
+  </div>
+
+  <div class="panel">
+    <h2>Public Downloads</h2>
+    <p class="muted small">Everything shared with “Everyone”. No key required.</p>
+    <div style="overflow:auto">
+      <table id="tbl"><thead><tr><th>Name</th><th>Folder</th><th>Size</th><th>Added</th><th class="right">Downloads</th><th></th></tr></thead>
+      <tbody id="rows"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/common.js"></script>
+<script src="/assets/matrix.js"></script>
+<script>
+(async function () {
+  const r = await Dids.api('/api/public/files');
+  const rows = document.getElementById('rows');
+  const files = (r.data.files) || [];
+  if (!files.length) { rows.innerHTML = '<tr><td colspan="6" class="empty">No public files yet.</td></tr>'; return; }
+  rows.innerHTML = files.map((f) => `
+    <tr>
+      <td>${Dids.esc(f.name)}</td>
+      <td class="muted">${Dids.esc(f.folder || '—')}</td>
+      <td class="nowrap">${Dids.esc(f.sizeHuman)}</td>
+      <td class="nowrap muted small">${Dids.fmtDate(f.created_at)}</td>
+      <td class="right muted">${f.downloads || 0}</td>
+      <td class="right"><a class="btn sm" href="${f.link}">Download</a></td>
+    </tr>`).join('');
+})();
+</script>
+</body>
+</html>

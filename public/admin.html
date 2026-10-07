@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin · Dids File Storage</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='78' font-size='78'>💾</text></svg>">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="scrim"></div>
+<div class="wrap">
+  <div class="bar">
+    <a class="brand" href="/" style="text-decoration:none">Dids File Storage <small>&lt;3</small></a>
+    <span class="tag admin">ADMIN</span>
+    <div class="spacer"></div>
+    <a class="navlink" href="/public">Public</a>
+    <a class="navlink" href="/private">Private</a>
+    <button class="navlink" id="logout">Log out</button>
+  </div>
+
+  <div class="grid three" id="stats" style="margin-bottom:18px"></div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="tickets">Tickets</div>
+    <div class="tab" data-tab="uploads">All Uploads</div>
+    <div class="tab" data-tab="keys">Auth Keys</div>
+    <div class="tab" data-tab="folders">Folders</div>
+    <div class="tab" data-tab="activity">Activity Log</div>
+  </div>
+
+  <section id="tab-tickets">
+    <div class="panel">
+      <h2>Removal Tickets</h2>
+      <div style="overflow:auto"><table>
+        <thead><tr><th>When</th><th>File link</th><th>Reason</th><th>Discord</th><th>From</th><th>Status</th><th></th></tr></thead>
+        <tbody id="tix"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <section id="tab-uploads" class="hidden">
+    <div class="panel">
+      <h2>All Uploads</h2>
+      <p class="muted small">Every file, who uploaded it, their device/IP/location and when — plus force removal.</p>
+      <div style="overflow:auto"><table>
+        <thead><tr><th>Name</th><th>Access</th><th>Size</th><th>Folder</th><th>Uploader</th><th>Device / IP / Location</th><th>When</th><th></th></tr></thead>
+        <tbody id="ups"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <section id="tab-keys" class="hidden">
+    <div class="panel">
+      <div class="flexrow"><h2 style="margin:0">Auth Keys</h2><div class="spacer"></div>
+        <button id="genkey">+ Generate key</button></div>
+      <p class="muted small">Each key binds to one device/IP on first use. If used elsewhere the user is told to contact admin — use <b>Reset device</b> to let them re-bind.</p>
+      <div style="overflow:auto"><table>
+        <thead><tr><th>Label</th><th>Role</th><th>Prefix</th><th>Status</th><th>Bound device / IP / location</th><th>Last seen</th><th></th></tr></thead>
+        <tbody id="keys"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <section id="tab-folders" class="hidden">
+    <div class="panel">
+      <div class="flexrow"><h2 style="margin:0">Folders</h2><div class="spacer"></div>
+        <button id="genfolder">+ Folder</button></div>
+      <div style="overflow:auto"><table>
+        <thead><tr><th>Name</th><th>Permission</th><th>Created</th><th>By</th></tr></thead>
+        <tbody id="folders"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <section id="tab-activity" class="hidden">
+    <div class="panel">
+      <h2>Activity Log</h2>
+      <p class="muted small">Key entries, lock violations, uploads, downloads, deletions and ticket events — with IP, location and device.</p>
+      <div style="overflow:auto"><table>
+        <thead><tr><th>When</th><th>Event</th><th>Role</th><th>IP</th><th>Location</th><th>Device</th><th>Detail</th></tr></thead>
+        <tbody id="act"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+      </table></div>
+    </div>
+  </section>
+</div>
+
+<script src="/assets/common.js"></script>
+<script src="/assets/matrix.js"></script>
+<script src="/assets/admin.js"></script>
+</body>
+</html>

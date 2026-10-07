@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Private · Dids File Storage</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='78' font-size='78'>💾</text></svg>">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="scrim"></div>
+<div class="wrap">
+  <div class="bar">
+    <a class="brand" href="/" style="text-decoration:none">Dids File Storage <small>&lt;3</small></a>
+    <span class="pill" id="whoami">staff</span>
+    <div class="spacer"></div>
+    <a class="navlink" href="/public">Public Downloads</a>
+    <button class="navlink" id="logout">Log out</button>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="upload">Upload Section</div>
+    <div class="tab" data-tab="downloads">Private Downloads</div>
+    <div class="tab" data-tab="removal">Request Removal</div>
+  </div>
+
+  <!-- UPLOAD -->
+  <section id="tab-upload">
+    <div class="grid two">
+      <div class="panel">
+        <h2>Upload files</h2>
+        <p class="muted small">Up to 250&nbsp;GB per file. Large files are sent in chunks so they upload reliably.</p>
+
+        <label>Folder</label>
+        <div class="flexrow">
+          <select id="folder" style="flex:1"></select>
+          <button class="sm ghost" id="newfolder">+ Folder</button>
+        </div>
+
+        <label>Who can access these uploads?</label>
+        <select id="perm">
+          <option value="staff">Staff Only</option>
+          <option value="everyone">Everyone (public)</option>
+        </select>
+
+        <label style="margin-top:14px">Files</label>
+        <div class="drop" id="drop">Drop files here or <label style="display:inline;color:var(--blue);cursor:pointer;margin:0">browse<input id="file" type="file" multiple hidden></label></div>
+        <div id="queue" style="margin-top:12px"></div>
+      </div>
+
+      <div class="panel">
+        <h3>How uploads work</h3>
+        <p class="small muted">Each file is split into ~95&nbsp;MB parts and streamed to R2 storage via multipart upload (max 10,000 parts → up to ~950&nbsp;GB technically; capped here at 250&nbsp;GB). If a part fails it is retried automatically. Your identity, device, IP and location are logged with every upload for safety.</p>
+        <h3>Folders</h3>
+        <p class="small muted">Files live inside folders. A folder’s permission (Everyone / Staff Only) and each upload’s permission together decide who sees it. Create folders with <b>+ Folder</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOADS -->
+  <section id="tab-downloads" class="hidden">
+    <div class="panel">
+      <h2>Private Downloads</h2>
+      <p class="muted small">All files, including Staff&nbsp;Only. “Everyone” files are also public.</p>
+      <div style="overflow:auto">
+        <table><thead><tr><th>Name</th><th>Folder</th><th>Access</th><th>Size</th><th>Added</th><th class="right">DLs</th><th></th></tr></thead>
+        <tbody id="drows"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- REMOVAL -->
+  <section id="tab-removal" class="hidden">
+    <div class="grid two">
+      <div class="panel">
+        <h2>Request Removal</h2>
+        <p class="muted small">Submit a takedown request. It appears instantly in the admin Tickets queue.</p>
+        <label>File link</label>
+        <input id="rq-link" placeholder="https://your-site/dl/…  (paste the file link)">
+        <label>Reason</label>
+        <textarea id="rq-reason" placeholder="Why should this be removed?"></textarea>
+        <label>Discord name</label>
+        <input id="rq-discord" placeholder="username#0000 or @username">
+        <div class="btnrow" style="margin-top:14px"><button id="rq-send">Submit request</button></div>
+      </div>
+      <div class="panel">
+        <h3>Tips</h3>
+        <p class="small muted">Copy the file’s link from the <b>Private Downloads</b> tab (the Download button’s address), paste it here, add a clear reason and your Discord so admin can follow up.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="/assets/common.js"></script>
+<script src="/assets/matrix.js"></script>
+<script src="/assets/private.js"></script>
+</body>
+</html>

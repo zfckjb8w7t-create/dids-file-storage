@@ -1,0 +1,31 @@
+name = "dids-file-storage"
+main = "src/worker.js"
+compatibility_date = "2025-09-01"
+
+# The Worker runs first on every request; it serves /api/* and /dl/* itself and
+# hands everything else to the static assets binding.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = true
+
+# Plain (non-secret) vars. LOCK_MODE: "hwid" (default) or "hwid+ip" (stricter).
+[vars]
+LOCK_MODE = "hwid"
+
+# D1 database — create it, then paste the id below (see README step 3).
+[[d1_databases]]
+binding = "DB"
+database_name = "dids-file-storage"
+database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
+
+# R2 bucket for file contents — create it first (see README step 2).
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "dids-file-storage"
+
+# Secrets are NOT stored here. Set them once with:
+#   wrangler secret put ADMIN_KEY
+#   wrangler secret put SESSION_SECRET
+# ADMIN_KEY      = your master admin key (used on the home page to reach /admin)
+# SESSION_SECRET = any long random string used to sign login cookies

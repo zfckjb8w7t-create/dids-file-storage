@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dids File Storage</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='78' font-size='78'>💾</text></svg>">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="scrim"></div>
+<div class="wrap">
+  <div class="bar">
+    <div class="brand">Dids File Storage <small>&lt;3</small></div>
+    <div class="spacer"></div>
+    <a class="navlink" href="/public">Public Downloads</a>
+  </div>
+
+  <div class="hero">
+    <div id="title4d" class="title4d"></div>
+    <div class="tagline">Secure uploads &amp; storage. Enter your access key to continue, or browse public downloads.</div>
+
+    <div class="panel keybox" id="keypanel">
+      <h2 class="center">Enter access key</h2>
+      <div class="keyrow">
+        <input id="key" type="password" placeholder="dids_••_••••••••" autocomplete="off" spellcheck="false">
+        <button id="go">Enter</button>
+      </div>
+      <p class="small muted center" id="hint" style="margin:12px 0 0">Your key decides where you land: admin, private (staff), or public.</p>
+    </div>
+
+    <div class="flexrow" style="justify-content:center">
+      <a class="btn ghost" href="/public">Browse Public Downloads →</a>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/common.js"></script>
+<script src="/assets/matrix.js"></script>
+<script>
+(async function () {
+  const role = await Dids.me();            // already signed in? jump straight there
+  if (role === 'admin') location.href = '/admin';
+  else if (role === 'staff') location.href = '/private';
+
+  const input = document.getElementById('key');
+  const btn = document.getElementById('go');
+  const panel = document.getElementById('keypanel');
+  const hint = document.getElementById('hint');
+
+  async function submit() {
+    const key = input.value.trim();
+    if (!key) { input.focus(); return; }
+    btn.disabled = true; btn.textContent = '…';
+    const r = await Dids.enterKey(key);
+    btn.disabled = false; btn.textContent = 'Enter';
+    if (r.ok) { location.href = r.redirect; return; }
+    if (r.locked) {
+      panel.classList.add('locked');
+      hint.innerHTML = '🔒 ' + Dids.esc(r.message || 'This key is already bound to another device/IP. Contact admin to resolve issue.');
+      hint.style.color = 'var(--danger)';
+      return;
+    }
+    panel.classList.add('locked');
+    hint.textContent = r.revoked ? 'This key has been revoked. Contact admin.' : 'Invalid key. Check it and try again.';
+    hint.style.color = 'var(--danger)';
+    setTimeout(() => { panel.classList.remove('locked'); }, 1200);
+  }
+  btn.addEventListener('click', submit);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+  input.focus();
+})();
+</script>
+</body>
+</html>
