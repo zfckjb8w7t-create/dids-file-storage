@@ -135,13 +135,23 @@ const BUCKET = {
 // ---------------- ASSETS shim ----------------
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.json': 'application/json', '.ico': 'image/x-icon', '.png': 'image/png' };
 const ASSETS = {
+  // Mimics Cloudflare Workers static-assets with the default
+  // html_handling: "auto-trailing-slash" — including the redirects that
+  // caused a production-only loop the simpler stub had hidden.
   async fetch(request) {
     const url = new URL(request.url);
-    let p = decodeURIComponent(url.pathname);
-    if (p === '/' || p.endsWith('/')) p += 'index.html';
-    let file = path.join(ROOT, 'public', p);
-    if (!fs.existsSync(file) && fs.existsSync(file + '.html')) file += '.html';
-    if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) return new Response('Not found', { status: 404 });
+    const p = decodeURIComponent(url.pathname);
+    const redirect = (to) => Response.redirect(new URL(to, url).toString(), 307);
+    if (p !== '/' && p.endsWith('/')) return redirect(p.slice(0, -1));          // /x/ -> /x
+    if (p.endsWith('.html')) return redirect(p === '/index.html' ? '/' : p.slice(0, -5)); // /x.html -> /x
+    let file;
+    if (p === '/') file = path.join(ROOT, 'public', 'index.html');
+    else {
+      const direct = path.join(ROOT, 'public', p);
+      if (fs.existsSync(direct) && fs.statSync(direct).isFile()) file = direct;
+      else if (fs.existsSync(direct + '.html')) file = direct + '.html';        // /admin -> admin.html
+    }
+    if (!file || !fs.existsSync(file)) return new Response('Not found', { status: 404 });
     const ext = path.extname(file).toLowerCase();
     return new Response(fs.readFileSync(file), { headers: { 'content-type': MIME[ext] || 'application/octet-stream' } });
   },

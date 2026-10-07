@@ -47,11 +47,15 @@ async function body(request) {
 async function serveAsset(request, env, url, p) {
   const pages = globalThis.__PAGES__;
   if (pages) {
+    // bundle mode: look up the embedded page by its mapped path
     const page = pages[p] || pages[p + '.html'] || (p.endsWith('/') ? pages[p + 'index.html'] : null);
     if (!page) return new Response('Not found', { status: 404 });
     return new Response(page.body, { headers: { 'content-type': page.ct } });
   }
-  return env.ASSETS.fetch(new Request(new URL(p, url), request));
+  // assets-binding mode: forward the ORIGINAL request so Cloudflare's asset
+  // server applies html_handling itself (/ -> index.html, /admin -> admin.html).
+  // Rewriting to the ".html" path triggers its /x.html -> /x redirect and loops.
+  return env.ASSETS.fetch(request);
 }
 
 async function api(request, env, ctx, url) {
