@@ -17,7 +17,7 @@ LOCK_MODE = "hwid"
 [[d1_databases]]
 binding = "DB"
 database_name = "dids-file-storage"
-database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
+database_id = "43214606-f04c-4903-a04b-d78079a21d56"
 
 # R2 bucket for file contents — create it first (see README step 2).
 [[r2_buckets]]
